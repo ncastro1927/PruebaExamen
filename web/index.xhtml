@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xml:p="http://primefaces.org/ui"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <h:form> 
+            <p:panelGrid columns="1">
+                <p:growl id="msg" showDetail="tue"/>
+                <p:inputText value="#{loginController.correo}" placeholder="Correo electronico"/>
+                <p:password value="#{loginController.clave}" placeholder="Contraseña"/>
+                <p:commandButton value="Ingrese al sistema" actionListener="#{loginController.ingresar}" update="msg"/>
+            </p:panelGrid>    
+        </h:form> 
+    </h:body>
+</html>

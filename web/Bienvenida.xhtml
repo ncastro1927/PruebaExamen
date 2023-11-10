@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        Biendovenido a la web
+        <h:form id="form">
+            <p:growl id="messages" showDetail="true" />
+
+            <p:commandButton value="Nuevo Proyecto" icon="pi pi-plus" actionListener="#{ProyectoController.openNew}"
+                             update=":dialogs:manage-product-content" oncomplete="PF('manageProductDialog').show()"
+                             styleClass="ui-button-success" style="margin-right: .5rem">
+                <p:resetInput target=":dialogs:manage-product-content" />
+            </p:commandButton>
+            <p:dataTable var="miProyecto" value="#{ProyectoController.listaRetorno1}"  rows="10"
+                         paginator="true" paginatorPosition="both"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,{ShowAll|'All'}">
+                <p:column headerText="ID">
+                    <h:outputText value="#{miProyecto.id_Proyecto}" />
+                </p:column>
+
+                <p:column headerText="Codigo">
+                    <h:outputText value="#{miProyecto.codigo}" />
+                </p:column>
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{miProyecto.nombre}" />
+                </p:column>
+                <p:column headerText="Descripcion">
+                    <h:outputText value="#{miProyecto.descripcion}" />
+                </p:column>
+
+
+                <p:column headerText="Acciones">
+                    <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-product-content"
+                                     oncomplete="PF('manageProductDialog').show()"
+                                     style="background-color: darkseagreen; color: white;"
+                                     styleClass="edit-button rounded-button ui-button-success" process="@this">
+                        <f:setPropertyActionListener value="#{miProyecto}" target="#{ProyectoController.selectedProyecto}" />
+                        <p:resetInput target=":dialogs:manage-product-content" />
+                    </p:commandButton>
+                    <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash"
+                                     process="@this"
+                                     style="background-color: red; color: white;"
+                                     oncomplete="PF('deleteProductDialog').show()">
+                        <f:setPropertyActionListener value="#{miProyecto}" target="#{ProyectoController.selectedProyecto}" />
+                    </p:commandButton>
+                    
+                </p:column>
+                
+                <p:column headerText="Tareas">
+                    <p:commandButton icon="pi pi-plus" actionListener="#{TareaController.openNewTarea()}"
+                                     update=":dialogs:manage-tarea-content" oncomplete="PF('manageTareaDialog').show()"
+                                     style="background-color: gold; color: white;"
+                                     styleClass="ui-button-warning rounded-button" >
+                        <p:resetInput target=":dialogs:manage-tarea-content" />
+                    </p:commandButton>
+
+                    <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-eye"
+                                     process="@this"
+                                     style="background-color: blue; color: white;"
+                                     oncomplete="PF('taskListDialog').show()">
+                        <f:setPropertyActionListener value="#{TareaController.listaTarea}" target="#{TareaController.selectedTarea}" />
+                    </p:commandButton>
+                </p:column>
+                
+                <f:facet name="paginatorTopLeft">
+                </f:facet>
+
+                <f:facet name="paginatorBottomRight">
+                </f:facet>
+
+            </p:dataTable>
+        </h:form>
+
+        <h:form id="dialogs">
+            <p:growl id="messagesDialogs" showDetail="True" />
+            <p:dialog header="Detalle proyecto" showEffect="fade" modal="true" widgetVar="manageProductDialog"
+                      responsive="true">
+                <p:outputPanel id="manage-product-content" class="ui-fluid">
+                    <div class="field">
+                        <p:outputLabel for="codigo1">Codigo</p:outputLabel>
+                        <p:inputText id="codigo1" value="#{ProyectoController.selectedProyecto.codigo}"/>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="nombre1">Nombre</p:outputLabel>
+                        <p:inputText id="nombre1" value="#{ProyectoController.selectedProyecto.nombre}"/>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="descripcion1">Descripcion</p:outputLabel>
+                        <p:inputText id="descripcion1" value="#{ProyectoController.selectedProyecto.descripcion}"/>
+                    </div>
+                </p:outputPanel>
+                
+                <f:facet name="footer">
+                    <p:commandButton value="Guardar" icon="pi pi-check" actionListener="#{ProyectoController.saveProyecto}"
+                                     update="form manage-product-content messagesDialogs " process="manage-product-content @this" />
+                    <p:commandButton value="Salir" icon="pi pi-times" onclick="PF('manageProductDialog').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+
+            <p:confirmDialog widgetVar="deleteProductDialog" showEffect="fade" width="300"
+                             message="Desea eliminar este usuario?" header="Confirmar" severity="warn">
+                <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{ProyectoController.deleteProyecto()}"
+                                 process="@this" update="form manage-product-content messagesDialogs"
+                                 oncomplete="PF('deleteProductDialog').hide()" />
+                <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('deleteProductDialog').hide()" />
+            </p:confirmDialog>
+
+            <p:dialog header="Detalle Tarea" showEffect="fade" modal="true" widgetVar="manageTareaDialog"
+                      responsive="true">
+                <p:outputPanel id="manage-tarea-content" class="ui-fluid">
+                    <div class="field">
+                        <p:outputLabel for="nombre">Nombre</p:outputLabel>
+                        <p:inputText id="nombre" value="#{TareaController.selectedTarea.nombre}"/>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="descripcion">Descripcion Tarea</p:outputLabel>
+                        <p:inputText id="descripcion" value="#{TareaController.selectedTarea.descripcion}"/>
+                    </div>
+                </p:outputPanel>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Guardar" icon="pi pi-check" actionListener="#{TareaController.saveTarea}"
+                                     update="form manage-tarea-content messagesDialogs " process="manage-tarea-content @this" />
+                    <p:commandButton value="Salir" icon="pi pi-times" onclick="PF('manageTareaDialog').hide()"
+                                     class="ui-button-secondary" type="button" />
+
+                </f:facet>
+
+            </p:dialog>
+
+            <p:dialog header="Lista Tareas" widgetVar="taskListDialog" modal="true" dynamic="true" width="60%">
+                <p:dataTable var="tarea" value="#{TareaController.listaTarea}" rows="10">
+                    <!-- Define your table columns here, for example: -->
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{tarea.nombre}" />
+                    </p:column>
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{tarea.descripcion}" />
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+</html>
